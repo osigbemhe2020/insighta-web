@@ -3,7 +3,7 @@
 import { useRouter, usePathname } from 'next/navigation';
 import api from '@/lib/api';
 
-const BACKEND_URL = 'http://localhost:3002';
+const BACKEND_URL = 'https://site--hng14-backend--nlrjqkv9zhwn.code.run';
 
 const styles = {
   nav: { background: '#1e293b', color: 'white', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 56 },
