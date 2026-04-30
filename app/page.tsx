@@ -1,6 +1,6 @@
 'use client';
 
-const BACKEND_URL = 'https://site--hng14-backend--nlrjqkv9zhwn.code.run'
+const BACKEND_URL = 'api/proxy'
 
 const styles = {
   container: { minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' },
