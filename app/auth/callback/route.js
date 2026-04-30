@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const BACKEND_URL = 'https://site--hng14-backend--nlrjqkv9zhwn.code.run/';
+const BACKEND_URL = 'https://site--hng14-backend--nlrjqkv9zhwn.code.run';
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
