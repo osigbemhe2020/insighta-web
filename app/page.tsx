@@ -1,6 +1,6 @@
 'use client';
 
-const BACKEND_URL = 'http://localhost:3002'
+const BACKEND_URL = 'https://site--hng14-backend--nlrjqkv9zhwn.code.run'
 
 const styles = {
   container: { minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' },
