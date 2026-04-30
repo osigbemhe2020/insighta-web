@@ -12,7 +12,6 @@ export async function GET(request) {
 
   try {
     // Exchange the one-time token for real JWT tokens
-    // This runs SERVER-SIDE — tokens never exposed to browser JS
     const response = await fetch(`${BACKEND_URL}/auth/exchange?token=${token}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' }
@@ -26,26 +25,30 @@ export async function GET(request) {
     const data = await response.json();
     const { access_token, refresh_token } = data.data;
 
-    // Redirect to dashboard and set HTTP-only cookies server-side
+    // Instead of setting cookies directly, call backend to set them
+    // This way cookies are on the backend domain
+    const setCookieResponse = await fetch(`${BACKEND_URL}/auth/set-cookies`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ access_token, refresh_token })
+    });
+
+    if (!setCookieResponse.ok) {
+      console.error('Failed to set cookies on backend');
+      return NextResponse.redirect(new URL('/?error=auth_failed', request.url));
+    }
+
+    // Get the Set-Cookie headers from backend and forward them
+    const setCookieHeaders = setCookieResponse.headers.getSetCookie
+      ? setCookieResponse.headers.getSetCookie()
+      : [];
+
     const dashboardUrl = new URL('/dashboard', request.url);
     const res = NextResponse.redirect(dashboardUrl);
 
-    const isProduction = process.env.NODE_ENV === 'production';
-
-    res.cookies.set('access_token', access_token, {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: isProduction ? 'none' : 'lax',
-      maxAge: 3 * 60, // 3 minutes in seconds
-      path: '/'
-    });
-
-    res.cookies.set('refresh_token', refresh_token, {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: isProduction ? 'none' : 'lax',
-      maxAge: 5 * 60, // 5 minutes in seconds
-      path: '/'
+    // Forward the backend's Set-Cookie headers to the browser
+    setCookieHeaders.forEach(cookie => {
+      res.headers.append('Set-Cookie', cookie);
     });
 
     return res;
